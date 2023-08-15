@@ -17,7 +17,9 @@ After some years dealing with our customers' projects, we gathered a lot of know
 
 ** This document
 
-This document is written in =org-mode=, which is sort of Markdown format. If in Emacs, you can open the links by using your mouse or by pressing ~C-c C-o~ when your cursor is over the link itself.
+This document is written in =org-mode=, which is sort of Markdown format. If you'd like to have a full-immersion about Emacs capabilities, I suggest to open this file in Emacs itself, maybe using the *Quasar* distro itself :D (see [[Installation][Installation]] and [[Usage][Usage]])
+
+⚠️*IMPORTANT*: within the =org-mode=, you can open the links by using your mouse or by pressing ~C-c C-o~ when your cursor is over the link itself! If you're reading this file within Emacs, try to open the links in the next sentence.👇 If you want to open some links in specific browsers, read the [[URL Browse Handler][URL Browse Handler]] section.
 
 More information about Org Mode can be found in the [[info:org][built-in documentation]], on the [[https://orgmode.org/][website]] and in the [[https://orgmode.org/worg/][Worg (the Org-Mode Community)]].
 
@@ -53,16 +55,21 @@ The commands in Emacs are /interactive/ elisp functions. An interactive function
 
 One of the most important thing every emacser appreciate about Emacs is the introspection capabilities and the presence of an highly detailed [[info:Emacs][built-in documentation]].
 
-* Usage
-** Boot process
+1. if you want to learn more about Emacs, please [[info:emacs][RTFM ;)]]
+2. whenever you're in a =emacs-lisp= code block, you can put the cursor on a function and press ~C-h f~ to see its documentation; if you're on a variable press ~C-h v~; if you're not sure if your cursor is on a variable or a function, invoke ~C-h o~.
+3. if you want to know which function is attached to a specific keybinding, press ~C-h k~: in the minibuffer you'll see something like /Describe the following key, mouse click or menu item/. Now press a keybinding (try with ~C-f~ which is used to move the cursor forward, or try with ~C-x C-f~ which is used to open a file).
+4. ....
+
+* TODO Installation
 
 Download this repo in your =~/.emacs.d=
 
 #+begin_src sh :tangle no
   git clone https://github.com/nebulab/quasar.git ~/.emacs.d
 #+end_src
+* TODO Usage
 
-** Package manager
+* Package manager
 #+begin_src emacs-lisp
   (add-to-list 'load-path "~/.emacs.d/manual-packages/")
   (require 'package)
@@ -115,23 +122,10 @@ Set transparent background (disabled by default)
 
 ** Themes
 
-#+begin_src emacs-lisp
-  (use-package doom-themes
-    :config
-    ;; Global settings (defaults)
-    (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-	  doom-themes-enable-italic t) ; if nil, italics is universally disabled
-    (load-theme 'doom-one t)
+By default use the [[https://www.youtube.com/watch?v=a3GW9kxmpqA][built-in dark version of /modus/ themes]] by [[Prot][Prot]].
 
-    ;; Enable flashing mode-line on errors
-    (doom-themes-visual-bell-config)
-    ;; Enable custom neotree theme (all-the-icons must be installed!)
-    (doom-themes-neotree-config)
-    ;; or for treemacs users
-    (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
-    (doom-themes-treemacs-config)
-    ;; Corrects (and improves) org-mode's native fontification.
-    (doom-themes-org-config))
+#+begin_src emacs-lisp
+  (load-theme 'modus-vivendi t)
 #+end_src
 
 ** Icons
@@ -221,6 +215,16 @@ Install the mighty =wgrep= package in order to make the standard grep buffers ed
 	   ("b" . project-switch-to-buffer)))
 #+end_src
 
+** TODO URL Browse Handler
+
+This is an example of how you can tell Emacs to open urls with specific browsers. The first part of each =cons= is a Regular Expression, the last is a function.
+
+#+begin_src emacs-lisp
+  (setq browse-url-handlers '(("github" . browse-url-chrome)
+			      ("youtube" . browse-url-firefox)
+			      ("." . eww-browse-url)))
+#+end_src
+
 ** Engine
 
 This useful minor mode ~enables you to easily define search engines, bind them to keybindings, and query them from the comfort of your editor.~
@@ -298,17 +302,17 @@ Enable in-buffer autocompletion using =company= package.
 
 ** Minibuffer and completions
 
-Standard completion system of Emacs can be a bit weird to newcomers; =vertico= is a great package that simplify picking candidates of a the completion system.
+Standard completion system of Emacs can be a bit weird to newcomers. [[Prot][Prot]] wrote the fantastick =mct= package that simplify picking candidates of a the completion system.
 
 #+begin_src emacs-lisp
-  (setq completion-styles '(initials flex)
-	enable-recursive-minibuffers t
-	completions-format 'one-column)
-
-  (use-package vertico
+  (use-package mct
     :config
-    (vertico-mode 1))
+    (mct-minibuffer-mode 1))
+#+end_src
 
+Enable the orderless candidates matching, which is slightly better than the Emacs built-in ones.
+
+#+begin_src emacs-lisp
   (use-package orderless
     :custom
     (completion-styles '(orderless)))
@@ -690,3 +694,8 @@ As initial buffer, we could provide something custom, but for now we use the =da
   (setq custom-file (concat user-emacs-directory "custom.el"))
   (load custom-file 'noerror)
 #+end_src
+
+* Credits
+** Protesilaos Stavrou, also known as /Prot/
+
+https://protesilaos.com/
