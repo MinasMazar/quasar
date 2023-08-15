@@ -60,13 +60,13 @@ The commands in Emacs are /interactive/ elisp functions. An interactive function
 - why ~(global-set-key (kbd "C-S-l") (lambda () (interactive) (forward-char 4)))~ must be written this way
 - universal arguments
 
-* TODO Installation
+* Usage
 ** Pre-requisites
 
 - git
 - emacs (for Mac OS try installing it via =brew= or [[https://emacsformacosx.com/][Emacs for Mac OS]])
 
-** Download
+** Installation
 
 #+begin_src sh :tangle no
   git clone https://github.com/nebulab/quasar.git ~/nebulab/quasar
@@ -79,7 +79,7 @@ Open a temrinal session and run
 #+end_src
 
 You should receive an output like /Tangled .. code blocks from emacs-quasar.org/.
-If so you can start your Quasar Emacs 🚀
+If so, the Quasar configuration has been installed in =~/.emacs.d/init.el=; you can now start Emacs 🚀
 
 *N.B.* during the first you open Emacs, you'll probably be prompted for some =yes or now=. I'd answer yes to all 👍
 
