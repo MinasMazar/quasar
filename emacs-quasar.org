@@ -1,0 +1,682 @@
+#+TITLE: Quasar ~ an Emacs configuration baked by Neublab
+#+AUTHOR: Flavio Auciello
+#+EMAIL: flavioauciello@nebulab.com
+#+DATE: <2023-07-16 Sun>
+#+PROPERTY: header-args :tangle ~/.emacs.d/init.el :mkdirp yes
+#+STARTUP: show2levels
+
+* Introduction
+** Why?
+
+After some years dealing with our customers' projects, we gathered a lot of knowledge on process and development acivities. This distro is intended to better fits what is the usual work in Nebulab teams, and interface with the common tools we use internally.
+
+** Main goals
+
+- be more vanilla as possible (don't over-customize the standard Emacs)
+- give fundamental tools to start the *wornderful (and neverending) journey through Emacs*
+
+** This document
+
+This document is written in =org-mode=, which is sort of Markdown format. If in Emacs, you can open the links by using your mouse or by pressing ~C-c C-o~ when your cursor is over the link itself.
+
+More information about Org Mode can be found in the [[info:org][built-in documentation]], on the [[https://orgmode.org/][website]] and in the [[https://orgmode.org/worg/][Worg (the Org-Mode Community)]].
+
+** What is Emacs?
+
+#+begin_quote
+Emacs (Editor Macros) was developed by David A Moon in 1976 making it one of the oldest pieces of software which exists today. GNU Emacs, the most used variant(fork) of Emacs, was released in 1985 by Richard Stallman, the founder of GNU/Linux.
+#+end_quote
+
+#+begin_quote
+Emacs, "a great operating system, lacking only a decent editor"
+#+end_quote
+
+Emacs is an [[https://en.wikipedia.org/wiki/Emacs_Lisp][emacs-lisp]] (or elisp) interpreter. It's a dialect of common lisp that is focused on providing text editing functionalities. The interpreter capabilities are always present, even if you're editing a standard text file or a Ruby file, or if you're navigating a directory or a web-page (yes, Emacs has a built-in web browser). The easiest way to evaluate an emacs-lisp expression is to put the cursor at the end of it and invoking the =eval-last-sexp= command. If you're reading this page in Emacs (you've a copy of this =org-mode= file or you're navigating the contents of this page from the web), you can try it now: put your cursor at the end of the next expression (right after the "n") and then press the ~C-x C-e~ (ctrl + x, then ctrl + e).
+
+~emacs-version~
+
+You should have seen a string that is the version of your installed Emacs in the minibuffer. You can get the same result by putting your cursor at the end of the expression like before, but this time press the ~M-x~ (alt + x, we will explain later what's that): you should be prompted for a command to execute; now type ~execute-last-sexp~ and press ~RETURN~. As before, you should have seen your installed Emacs version in the minibuffer.
+
+** M-x
+
+All the interactive functions can be invoked via the ~M-x~ (alt + x) which invokes the ~execute-extended-command~: you can think of it as a /Command palette/ of other editors. Basically everything you can do to interact with Emacs, is invoking a function: try to invoke the command ~forward-char~ and ~backward-char~ using the ~M-x~ like you did before for the ~execute-last-sexp~; you can move your cursor on the page using those functions. As default, those functions are binded to ~C-f~ and ~C-b~ respectively. Try to invoke ~next-line~ and ~previous-line~ via ~M-x~: you can move your cursor among lines by invoking those functions, but an easier way is by using the default keybindings provided by Emacs: ~C-n~ and ~C-p~.
+
+** TODO Commands
+
+The commands in Emacs are /interactive/ elisp functions. An interactive functions is a function that contains the ~interactive~ special form in it. So commands are a subset of all the functions available in Emacs. *Remember*: the commands are the only functions that can be invoked via the ~M-x~ and are the only functions that can be binded to a keystroke.
+
+...other things to mention:
+- why ~(global-set-key (kbd "C-S-l") (lambda () (interactive) (forward-char 4)))~ must be written this way
+- universal arguments
+
+** TODO Documentation, Introspection and learning curve
+
+One of the most important thing every emacser appreciate about Emacs is the introspection capabilities and the presence of an highly detailed [[info:Emacs][built-in documentation]].
+
+* Usage
+** Boot process
+
+Download this repo in your =~/.emacs.d=
+
+#+begin_src sh :tangle no
+  git clone https://github.com/nebulab/quasar.git ~/.emacs.d
+#+end_src
+
+** Package manager
+#+begin_src emacs-lisp
+  (add-to-list 'load-path "~/.emacs.d/manual-packages/")
+  (require 'package)
+
+  (setq package-archives '(("melpa" . "https://melpa.org/packages/")
+			   ("elpa" . "https://elpa.gnu.org/packages/")
+			   ("nongnu" . "https://elpa.nongnu.org/nongnu/")))
+  (require 'use-package)
+  (require 'use-package-ensure)
+  (setq use-package-always-ensure t
+	package-enable-at-startup t)
+  (package-initialize)
+#+end_src
+
+* Main editor settings
+** Quasar layer
+
+Here we define some custom variables and functions using the =quasar/= namespace.
+
+#+begin_src emacs-lisp
+  (setq quasar-dir "~/nebulab/quasar/")
+
+  (defun quasar-pathname (pathname)
+    "Returns pathname of a file within the quasar-dir"
+    (format "%s/%s" quasar-dir pathname))
+
+  (defun quasar-config-file ()
+    "Returns main quasar-config-file (this file)"
+    (quasar-pathname "emacs-quasar.org"))
+#+end_src
+
+** Initial buffer
+
+As initial buffer, we could provide something custom, but for now we use the =dashboard= package.
+
+#+begin_src emacs-lisp
+  (use-package dashboard
+    :custom
+    (initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
+    (dashboard-banner-logo-title "Welcome to Quasar!")
+    (dashboard-startup-banner (quasar-pathname "nebulab_logo.png"))
+    (dashboard-center-content t)
+    :config
+    (dashboard-setup-startup-hook))
+#+end_src
+
+** Tab and Bars
+
+Here we tweak a bit the standard Emacs UI in order to rebrand in a more eye candy way.
+
+#+begin_src emacs-lisp
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (tab-bar-mode 1)
+#+end_src
+
+** Backgrounds
+
+Set transparent background (disabled by default)
+
+#+begin_src emacs-lisp
+  (set-frame-parameter (selected-frame) 'alpha '(95 95))
+#+end_src
+
+** Themes
+
+#+begin_src emacs-lisp
+  (use-package doom-themes
+    :config
+    ;; Global settings (defaults)
+    (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+	  doom-themes-enable-italic t) ; if nil, italics is universally disabled
+    (load-theme 'doom-one t)
+
+    ;; Enable flashing mode-line on errors
+    (doom-themes-visual-bell-config)
+    ;; Enable custom neotree theme (all-the-icons must be installed!)
+    (doom-themes-neotree-config)
+    ;; or for treemacs users
+    (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
+    (doom-themes-treemacs-config)
+    ;; Corrects (and improves) org-mode's native fontification.
+    (doom-themes-org-config))
+#+end_src
+
+** Icons
+
+#+begin_src emacs-lisp
+  (use-package nerd-icons)
+  (use-package all-the-icons)
+#+end_src
+
+Set modeline
+
+#+begin_src emacs-lisp
+  (use-package doom-modeline
+    :after (nerd-icons)
+    :init (doom-modeline-mode 1))
+#+end_src
+
+Set overall font face and dimension. You can customize it using the =customize-face= command for the =default-face=.
+
+#+begin_src emacs-lisp
+  (set-face-attribute 'default nil :font "Monaco" :height 180)
+#+end_src
+
+** File navigation
+*** Find file at point
+
+This override the standard ~C-c C-f~ keybinding to invoke =find-file-at-point= which is more useful (IMO) than the standard =find-file= function.
+
+#+begin_src emacs-lisp
+(global-set-key (kbd "C-x C-f") #'find-file-at-point)
+#+end_src
+
+*** Dired
+
+#+begin_src emacs-lisp
+  (require 'dired)
+  (setq dired-dwim-target t
+	dired-listing-switches "-alth"
+	dired-omit-files "\\`[.]?#\\|\\`[.][.]?")
+#+end_src
+
+*** Treemacs
+
+#+begin_src emacs-lisp
+  (use-package treemacs)
+#+end_src
+
+** Find & Replace
+
+*** Isearch overrides
+
+#+begin_src emacs-lisp
+  (keymap-set isearch-mode-map "<tab>" #'isearch-repeat-forward)
+  (keymap-set isearch-mode-map "<backtab>" #'isearch-repeat-backward)
+#+end_src
+
+*** Wgrep
+
+Install the mighty =wgrep= package in order to make the standard grep buffers editable!
+
+#+begin_src emacs-lisp
+  (use-package wgrep
+    :bind*
+    (:map grep-mode-map (("w" . #'wgrep-change-to-wgrep-mode))))
+#+end_src
+
+** Backup files
+
+#+begin_src emacs-lisp
+  (setq auto-save-default nil
+	make-backup-files nil)
+#+end_src
+
+** Embark
+
+#+begin_src emacs-lisp
+  (use-package embark
+    :bind*
+    ("C-," . embark-act)
+    (:map embark-general-map
+	  ("C-w" . browse-url))
+    (:map embark-url-map
+	  ("c" . browse-url-chrome)
+	  ("f" . browse-url-firefox))
+    (:map  embark-file-map
+	   ("p" . project-find-file)
+	   ("b" . project-switch-to-buffer)))
+#+end_src
+
+** Engine
+
+This useful minor mode ~enables you to easily define search engines, bind them to keybindings, and query them from the comfort of your editor.~
+If you want to add more engines refers to [[https://github.com/hrs/engine-mode#engine-examples][this paragraph]] in the =engine-mode= documentation.
+
+#+begin_src emacs-lisp
+  (use-package engine-mode
+    :config
+    (engine-mode)
+    (defengine github
+      "https://github.com/search?ref=simplesearch&q=%s"
+      :keybinding "h")
+
+    (defengine dockerhub
+      "https://hub.docker.com/search?q=%s"
+      :browser #'browse-url-chrome
+      :keybinding "d")
+
+    (defengine google
+      "http://www.google.com/search?ie=utf-8&oe=utf-8&q=%s"
+      :keybinding "g")
+
+    (defengine google-images
+      "http://www.google.com/images?hl=en&source=hp&biw=1440&bih=795&gbv=2&aq=f&aqi=&aql=&oq=&q=%s"
+      :keybinding "i")
+
+    (defengine google-maps
+      "http://maps.google.com/maps?q=%s"
+      :docstring "Mappin' it up."
+      :keybinding "m")
+
+    (defengine google-transalte
+      "https://translate.google.it/?sl=auto&tl=auto&text=%s&op=translate"
+      :docstring "Google Translator"
+      :keybinding "t")
+
+    (defengine stack-overflow
+      "https://stackoverflow.com/search?q=%s"
+      :keybinding "o")
+
+    (defengine youtube
+      "https://www.youtube.com/results?aq=f&oq=&search_query=%s"
+      :browser #'browse-url-firefox
+      :keybinding "y")
+
+    (defengine wikipedia
+      "https://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
+      :keybinding "w"
+      :docstring "Search on Wikipedia (EN)")
+
+    (defengine wikipedia
+      "https://www.wikipedia.org/search-redirect.php?language=it&go=Go&search=%s"
+      :keybinding "W"
+      :browser #'browse-url-firefox
+      :docstring "Search on Wikipedia (IT)"))
+#+end_src
+
+** Bookmarks
+
+Bookmarks can be loaded/saved in a custom file. Here's an example on how to customize it by getting it from my Dropbox!
+
+#+begin_src emacs-lisp
+  (setq bookmark-file "~/Dropbox/work/.bookmarks")
+#+end_src
+
+** Autocompletion
+
+Enable in-buffer autocompletion using =company= package.
+
+#+begin_src emacs-lisp
+  (use-package company
+    :config
+    (global-company-mode))
+#+end_src
+
+** Minibuffer and completions
+
+Standard completion system of Emacs can be a bit weird to newcomers; =vertico= is a great package that simplify picking candidates of a the completion system.
+
+#+begin_src emacs-lisp
+  (setq completion-styles '(initials flex)
+	enable-recursive-minibuffers t
+	completions-format 'one-column)
+
+  (use-package vertico
+    :config
+    (vertico-mode 1))
+
+  (use-package orderless
+    :custom
+    (completion-styles '(orderless)))
+#+end_src
+
+** Keybindings, keymaps and modal editing
+*** Tab key behavior
+
+#+begin_src emacs-lisp
+  (setq tab-always-indent 'complete
+	indent-tabs-mode nil)
+#+end_src
+
+*** Super key
+
+Bind the =super-key= to most important commands. The =execute-extented-command= is the like the /Command palette/ of other editors: whatever commands exists in Emacs, can be invoked with it. You can see the description of other commands using the Emacs [[Instrospection]]. 
+
+#+begin_src emacs-lisp
+  (global-set-key (kbd "s-k") #'execute-extended-command)
+  (global-set-key (kbd "s-j") #'switch-to-buffer)
+  (global-set-key (kbd "s--") #'bookmark-jump)
+  (global-set-key (kbd "s-_") nil)
+  (global-set-key (kbd "s-N") #'dired-jump)
+  (global-set-key (kbd "s-b") #'ibuffer)
+  (global-set-key (kbd "s-r") #'repeat)
+  (global-set-key (kbd "s-i") #'imenu)
+  (global-set-key (kbd "s-e") #'dabbrev-expand)
+  (global-set-key (kbd "s-1") #'delete-other-windows)
+  (global-set-key (kbd "s-3") #'split-window-horizontally)
+  (global-set-key (kbd "s-2") #'split-window-vertically)
+  (global-set-key (kbd "s-0") #'delete-window)
+  (global-set-key (kbd "s-w") #'other-window)
+  (global-set-key (kbd "s-W") #'maximize-window)
+  (global-set-key (kbd "s-R") #'query-replace-regexp)
+  (global-set-key (kbd "s-p") #'project-switch-to-buffer)
+  (global-set-key (kbd "s-P") #'project-find-file)
+  (global-set-key (kbd "s-t") #'rgrep)
+  (global-set-key (kbd "s-[") #'previous-buffer)
+  (global-set-key (kbd "s-]") #'next-buffer)
+  (global-set-key (kbd "s-{") #'previous-window-any-frame)
+  (global-set-key (kbd "s-}") #'next-window-any-frame)
+  (global-set-key (kbd "s-)") #'kill-this-buffer)
+  (global-set-key (kbd "s-\\") #'other-frame)
+  (global-set-key (kbd "s-=") #'balance-windows)
+#+end_src
+
+*** Translation keys
+
+Use Super key to enable ~C-x~ and ~C-c~!
+
+#+begin_src emacs-lisp
+  (keymap-set key-translation-map "s-m" "C-x")
+  (keymap-set key-translation-map "s-M" "C-c")
+#+end_src
+
+*** Modal editing (god-mode)
+
+#+begin_src emacs-lisp
+  (use-package god-mode
+    :bind
+    ("s-n" . #'god-local-mode)
+    :init
+    (defun minemacs-god-mode-enabled ()
+      (setq cursor-type 'box))
+    (defun minemacs-god-mode-disabled ()
+      (setq cursor-type 'bar))
+    :config
+    (add-hook 'god-mode-enabled-hook 'minemacs-god-mode-enabled)
+    (add-hook 'god-mode-disabled-hook 'minemacs-god-mode-disabled)
+    (keymap-set god-local-mode-map "i" #'god-local-mode)
+    (keymap-set god-local-mode-map "u" #'undo)
+    (keymap-set god-local-mode-map "U" #'undo-redo)
+    (keymap-set god-local-mode-map ">" #'end-of-buffer)
+    (keymap-set god-local-mode-map "<" #'beginning-of-buffer)
+    (keymap-set god-local-mode-map "[" #'backward-paragraph)
+    (keymap-set god-local-mode-map "]" #'forward-paragraph)
+    (keymap-set god-local-mode-map "{" #'backward-sexp)
+    (keymap-set god-local-mode-map "}" #'forward-sexp)
+    (add-to-list 'god-exempt-major-modes 'compilation-mode)
+    (add-to-list 'god-exempt-major-modes 'vterm-mode)
+    (god-mode))
+#+end_src
+
+Install which-key
+
+#+begin_src emacs-lisp
+  (use-package which-key
+    :config
+    (which-key-mode 1))
+#+end_src
+
+*** Modal editing (evil-mode)
+
+#+begin_src emacs-lisp :tangle no
+  (use-package evil
+    :bind
+    ("s-n" . evil-mode)
+    :config
+    (evil-mode 1))
+#+end_src
+
+*** Hydra
+
+[[https://github.com/abo-abo/hydra][Hydra package]] let you to easily bind custom keymaps.
+
+#+begin_src emacs-lisp
+  (use-package hydra
+    :config
+    (defhydra hydra-quasar-dev-tools (:color blue)
+      ("d" #'flymake-show-buffer-diagnostics "🔬 flymake diagnostic")
+      ("v" (lambda (&optional arg) (interactive "P") (vterm arg)) "🖥️ vterm")
+      ("w" #'browse-url-of-file "🌐 Open file in Browser (browse-url-of-file)")
+      ("q" nil "🔚 quit")
+      ("s-o" nil "quit"))
+
+    (defhydra hydra-quasar-bookmarks (:color blue)
+      ("j" #'bookmark-jump "🔖 jump")
+      ("s" #'bookmark-set "⏬ set")
+      ("e" #'edit-bookmarks "📖 edit")
+      ("q" nil "🔚 quit")
+      ("s-o" nil "quit"))
+
+    (defhydra hydra-quasar-org (:color blue)
+      ("a" #'org-agenda "📅 org-agenda")
+      ("c" #'org-capture "🔴 org-capture")
+      ("q" nil "🔚quit")
+      ("s-o" nil "quit"))
+
+    (defhydra hydra-quasar-filesystem (:color blue)
+      ("s" (lambda () (interactive) (find-file "~/Desktop")) "✏️ Desktop")
+      ("d" (lambda () (interactive) (find-file "~/Downloads")) "⬇️ Downloads")
+      ("h" (lambda () (interactive) (find-file "~/")) "🏠 home")
+      ("q" nil "🔚quit")
+      ("s-o" nil "quit"))
+
+    (defhydra hydra-quasar-utils (:color blue)
+      ("c" #'world-clock "🗺️ world clock")
+      ("t" #'alarm-clock-set "⏰ set timer!")
+      ("T" #'alarm-clock-list-view "📖 list timers")
+      ("q" nil "🔚quit")
+      ("s-o" nil "quit"))
+
+    (defhydra hydra-quasar-config (:color blue)
+      ("c" (lambda () (interactive) (find-file quasar/config-file)) "🔧 open config")
+      ("q" nil "🔚quit")
+      ("s-o" nil "quit"))
+
+    (defhydra hydra-quasar (:color blue)
+      ("e" #'emoji-search "😁 emoji")
+      ("a" #'hydra-quasar-win/body "🎨 appearance")
+      ("b" #'hydra-quasar-bookmarks/body "🔖 bookmarks")
+      ("x" #'hydra-quasar-config/body "✨ quasar")
+      ("d" #'hydra-quasar-dev-tools/body "🖥️ development")
+      ("s" #'eshell "🐚 eshell")
+      ("f" #'hydra-quasar-filesystem/body "📁 filesystem")
+      ("n" #'gnus "📧 gnus")
+      ("o" #'hydra-quasar-org/body "📅 org")
+      ("r" #'recentf "⌛recentf")
+      ("t" #'treemacs "🗃️ treemacs")
+      ("u" #'hydra-quasar-utils/body "🔦 utils")
+      ("w" #'eww "🌐 eww")
+      ("q" nil "🔚quit")
+      ("s-o" nil "quit"))
+
+    (global-set-key (kbd "s-o") 'hydra-quasar/body))
+#+end_src
+** Auth sources
+
+Let Emacs asks passwords in the minibuffer or read them via encrypteed =authinfo=.
+
+#+begin_src emacs-lisp
+  (setq epa-pinentry-mode 'loopback
+	auth-sources '("~/.authinfo.gpg"))
+#+end_src
+
+* Org-mode
+** Agenda
+
+You can get your agenda files by pointing to a custom directory.
+
+#+begin_src emacs-lisp
+  (setq org-agenda-files '(quasar-pathname "org/"))
+#+end_src
+
+* IDE
+** Versioning
+*** Git
+#+begin_src emacs-lisp
+  (use-package magit
+    :bind
+    (("C-x g" . #'magit-status)))
+#+end_src
+*** Github integration
+
+In order to make the github integration work you have to [[https://magit.vc/manual/forge/Token-Creation.html][create a token]].
+
+#+begin_src emacs-lisp
+  (use-package sqlite3)
+  (use-package forge
+    :after magit)
+#+end_src
+
+** Language Server Protocol
+*** COMMENT (lsp-mode)
+
+Switching in favor of Eglot since is built-in from Emacs 29.
+
+#+begin_src emacs-lisp
+  (use-package lsp-mode
+    :hook
+    (ruby-mode . lsp)
+    (yaml-mode . lsp)
+    (js-mode . lsp)
+    (json-mode . lsp)
+    (scss-mode . lsp)
+    (css-mode . lsp)
+    (elixir-mode . lsp)
+    (less-css-mode . lsp))
+
+  (use-package lsp-ui
+    :after lsp-mode)
+#+end_src
+*** Eglot
+
+#+begin_src emacs-lisp
+  (mapcar
+   (lambda (hook) (add-hook hook 'eglot-ensure))
+   '(ruby-mode yaml-mode js-mode json-mode scss-mode css-mode elixir-mode less-css-mode))
+#+end_src
+
+** Markup languages and Web Development
+
+#+begin_src emacs-lisp
+  (use-package yaml-mode
+    :custom
+    (yaml-imenu-generic-expression "^\\(:?[a-zA-Z_-]+\\):" 1))
+
+  (use-package csv-mode)
+
+  (use-package web-mode
+    :custom
+    (web-mode-code-indent-offset 2)
+    (web-mode-css-indent-offset 2)
+    (web-mode-markup-indent-offset 2)
+    (js-indent-level 2)
+    (css-indent-offset 2)
+    :config
+    (add-to-list 'auto-mode-alist '("\\.phtml\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.tpl\\.php\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.[agj]sp\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.as[cp]x\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.erb" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.mustache\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.djhtml\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.rest\\'" . restclient-mode)))
+
+  (use-package emmet-mode
+    :after web-mode
+    :hook
+    (sgml-mode . emmet-mode)
+    (html-mode . emmet-mode)
+    (web-mode . emmet-mode)
+    (css-mode . emmet-mode))
+#+end_src
+
+** Ruby
+
+#+begin_src emacs-lisp
+    (use-package ruby-mode)
+    (use-package bundler)
+    (use-package rspec-mode
+      :config
+      (add-hook 'after-init-hook 'inf-ruby-switch-setup)
+      (add-hook 'compilation-filter-hook #'inf-ruby-auto-enter)
+      (setq comint-scroll-to-bottom-on-output t))
+
+    (use-package rinari
+      :config
+      (defalias 'rake 'rinari-rake))
+#+end_src
+
+** Shell & Terminal
+*** Shell
+
+Press ~C-j~ and start typing to search commands in the history.
+
+#+begin_src emacs-lisp
+  (add-hook 'shell-mode-hook '(lambda () (keymap-set shell-mode-map "C-j" 'comint-history-isearch-backward-regexp)))
+#+end_src
+
+*** Vterm
+Vterm is the better terminal emulator in the Emacs ecosystem. It requires some native compilation when installing it, the only system requirement is having =cmake= and =libtool-bin=.
+
+#+begin_src emacs-lisp  
+    (use-package vterm
+      :config
+      (defun quasar/tmux/open ()
+	(interactive)
+	(with-current-buffer (vterm "*<tmux>*")
+	  (vterm-send-string "tmux attach\n"))))
+#+end_src
+
+*** Fish-like shell
+
+#+begin_src emacs-lisp
+  (use-package capf-autosuggest
+    :config
+    (capf-autosuggest-mode 1)
+    :hook
+    (comint-mode capf-autosuggest)
+    (eshell-mode capf-autosuggest))
+#+end_src
+
+** Docker
+
+#+begin_src emacs-lisp
+  (use-package docker)
+#+end_src
+
+** HTTP client
+*** restclient-mode
+
+#+begin_src emacs-lisp
+  (use-package restclient)
+#+end_src
+
+* MacOS compatibility                                           :portability:
+** Exec path
+
+On MacOS there are some problem on well syncing ENVs variables and other system info. A solution is to install the =exec-path-from-shell= package.
+
+#+begin_src emacs-lisp
+  (use-package exec-path-from-shell
+    :config
+    (exec-path-from-shell-initialize))
+#+end_src
+
+** Applications' paths
+
+Also you may want to customize =browse-url-firefox-program= and =browse-url-chrome-program= to points to the actual executables (something like =/Applications/Firefox.app/Contents/MacOS/firefox=..)
+
+* Usefulness
+** Timer!
+
+This package is really helpful putting some alarms! *CIUF CIUF!*
+
+#+begin_src emacs-lisp
+  (use-package alarm-clock)  
+#+end_src
+
+* Custom file
+
+#+begin_src emacs-lisp
+  (setq custom-file (concat user-emacs-directory "custom.el"))
+  (load custom-file 'noerror)
+#+end_src
