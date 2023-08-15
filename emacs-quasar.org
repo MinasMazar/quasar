@@ -43,14 +43,6 @@ You should have seen a string that is the version of your installed Emacs in the
 
 All the interactive functions can be invoked via the ~M-x~ (alt + x) which invokes the ~execute-extended-command~: you can think of it as a /Command palette/ of other editors. Basically everything you can do to interact with Emacs, is invoking a function: try to invoke the command ~forward-char~ and ~backward-char~ using the ~M-x~ like you did before for the ~execute-last-sexp~; you can move your cursor on the page using those functions. As default, those functions are binded to ~C-f~ and ~C-b~ respectively. Try to invoke ~next-line~ and ~previous-line~ via ~M-x~: you can move your cursor among lines by invoking those functions, but an easier way is by using the default keybindings provided by Emacs: ~C-n~ and ~C-p~.
 
-** TODO Commands
-
-The commands in Emacs are /interactive/ elisp functions. An interactive functions is a function that contains the ~interactive~ special form in it. So commands are a subset of all the functions available in Emacs. *Remember*: the commands are the only functions that can be invoked via the ~M-x~ and are the only functions that can be binded to a keystroke.
-
-...other things to mention:
-- why ~(global-set-key (kbd "C-S-l") (lambda () (interactive) (forward-char 4)))~ must be written this way
-- universal arguments
-
 ** TODO Documentation, Introspection and learning curve
 
 One of the most important thing every emacser appreciate about Emacs is the introspection capabilities and the presence of an highly detailed [[info:Emacs][built-in documentation]].
@@ -60,14 +52,36 @@ One of the most important thing every emacser appreciate about Emacs is the intr
 3. if you want to know which function is attached to a specific keybinding, press ~C-h k~: in the minibuffer you'll see something like /Describe the following key, mouse click or menu item/. Now press a keybinding (try with ~C-f~ which is used to move the cursor forward, or try with ~C-x C-f~ which is used to open a file).
 4. ....
 
-* TODO Installation
+** TODO Commands
 
-Download this repo in your =~/.emacs.d=
+The commands in Emacs are /interactive/ elisp functions. An interactive functions is a function that contains the ~interactive~ special form in it. So commands are a subset of all the functions available in Emacs. *Remember*: the commands are the only functions that can be invoked via the ~M-x~ and are the only functions that can be binded to a keystroke.
+
+...other things to mention:
+- why ~(global-set-key (kbd "C-S-l") (lambda () (interactive) (forward-char 4)))~ must be written this way
+- universal arguments
+
+* TODO Installation
+** Pre-requisites
+
+- git
+- emacs (for Mac OS try installing it via =brew= or [[https://emacsformacosx.com/][Emacs for Mac OS]])
+
+** Download
 
 #+begin_src sh :tangle no
-  git clone https://github.com/nebulab/quasar.git ~/.emacs.d
+  git clone https://github.com/nebulab/quasar.git ~/nebulab/quasar
 #+end_src
-* TODO Usage
+
+Open a temrinal session and run
+
+#+begin_src sh :tangle no
+  emacs -Q -nw --script ~/nebulab/quasar/install.el
+#+end_src
+
+You should receive an output like /Tangled .. code blocks from emacs-quasar.org/.
+If so you can start your Quasar Emacs 🚀
+
+*N.B.* during the first you open Emacs, you'll probably be prompted for some =yes or now=. I'd answer yes to all 👍
 
 * Package manager
 #+begin_src emacs-lisp
