@@ -94,21 +94,6 @@ Here we define some custom variables and functions using the =quasar/= namespace
     (quasar-pathname "emacs-quasar.org"))
 #+end_src
 
-** Initial buffer
-
-As initial buffer, we could provide something custom, but for now we use the =dashboard= package.
-
-#+begin_src emacs-lisp
-  (use-package dashboard
-    :custom
-    (initial-buffer-choice (lambda () (get-buffer-create "*dashboard*")))
-    (dashboard-banner-logo-title "Welcome to Quasar!")
-    (dashboard-startup-banner (quasar-pathname "nebulab_logo.png"))
-    (dashboard-center-content t)
-    :config
-    (dashboard-setup-startup-hook))
-#+end_src
-
 ** Tab and Bars
 
 Here we tweak a bit the standard Emacs UI in order to rebrand in a more eye candy way.
@@ -467,7 +452,7 @@ Install which-key
       ("s-o" nil "quit"))
 
     (defhydra hydra-quasar-config (:color blue)
-      ("c" (lambda () (interactive) (find-file quasar/config-file)) "🔧 open config")
+      ("c" (lambda () (interactive) (find-file (quasar-config-file))) "🔧 open config")
       ("q" nil "🔚quit")
       ("s-o" nil "quit"))
 
@@ -500,6 +485,12 @@ Let Emacs asks passwords in the minibuffer or read them via encrypteed =authinfo
 #+end_src
 
 * Org-mode
+** Beautify
+
+#+begin_src emacs-lisp
+  (use-package olivetti)
+#+end_src
+
 ** Agenda
 
 You can get your agenda files by pointing to a custom directory.
@@ -672,6 +663,25 @@ This package is really helpful putting some alarms! *CIUF CIUF!*
 
 #+begin_src emacs-lisp
   (use-package alarm-clock)  
+#+end_src
+
+* Initial buffer
+
+As initial buffer, we could provide something custom, but for now we use the =dashboard= package.
+
+#+begin_src emacs-lisp
+  (setq initial-buffer-choice (quasar-config-file))
+#+end_src
+
+#+begin_src emacs-lisp :tangle no
+  (use-package dashboard
+    :custom
+    (dashboard-banner-logo-title "Welcome to Quasar!")
+    ;;(dashboard-startup-banner (quasar-pathname "nebulab_logo.png"))
+    (dashboard-startup-banner 'logo)
+    (dashboard-center-content t)
+    :config
+    (dashboard-setup-startup-hook))
 #+end_src
 
 * Custom file
