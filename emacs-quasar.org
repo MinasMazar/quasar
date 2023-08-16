@@ -452,6 +452,8 @@ Install which-key
     (defhydra hydra-quasar-org (:color blue)
       ("a" #'org-agenda "📅 org-agenda")
       ("c" #'org-capture "🔴 org-capture")
+      ("C" #'org-roam-capture "🧠 org-roam-capture")
+      ("f" #'org-roam-node-find "🔍 org-roam-node-find")
       ("q" nil "🔚quit")
       ("s-o" nil "quit"))
 
@@ -514,7 +516,16 @@ Let Emacs asks passwords in the minibuffer or read them via encrypteed =authinfo
 You can get your agenda files by pointing to a custom directory.
 
 #+begin_src emacs-lisp
-  (setq org-agenda-files '(quasar-pathname "org/"))
+  (setq org-agenda-files '("~/Dropbox/work/org/")
+	diary-file "~/Dropbox/work/diary")
+#+end_src
+
+** Second brain (org-roam)
+
+#+begin_src emacs-lisp
+  (use-package org-roam
+    :custom
+    (org-roam-directory (file-truename "~/Dropbox/work/org")))
 #+end_src
 
 * IDE
@@ -536,7 +547,7 @@ In order to make the github integration work you have to [[https://magit.vc/manu
 #+end_src
 
 ** Language Server Protocol
-*** COMMENT (lsp-mode)
+*** (lsp-mode)
 
 Switching in favor of Eglot since is built-in from Emacs 29.
 
@@ -555,9 +566,10 @@ Switching in favor of Eglot since is built-in from Emacs 29.
   (use-package lsp-ui
     :after lsp-mode)
 #+end_src
+
 *** Eglot
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
   (mapcar
    (lambda (hook) (add-hook hook 'eglot-ensure))
    '(ruby-mode yaml-mode js-mode json-mode scss-mode css-mode elixir-mode less-css-mode))
@@ -673,6 +685,11 @@ On MacOS there are some problem on well syncing ENVs variables and other system 
 ** Applications' paths
 
 Also you may want to customize =browse-url-firefox-program= and =browse-url-chrome-program= to points to the actual executables (something like =/Applications/Firefox.app/Contents/MacOS/firefox=..)
+
+#+begin_src emacs-lisp
+  (setq browse-url-firefox-program "/Applications/Firefox.app/Contents/MacOS/firefox"
+	browse-url-chrome-program "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome")
+#+end_src
 
 * Usefulness
 ** Timer!
