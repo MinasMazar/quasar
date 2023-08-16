@@ -99,10 +99,9 @@ If so, the Quasar configuration has been installed in =~/.emacs.d/init.el=; you 
   (package-initialize)
 #+end_src
 
-* Main editor settings
-** Quasar layer
+* Quasar layer
 
-Here we define some custom variables and functions using the =quasar/= namespace.
+Here we define some custom variables and functions using the =quasar-= namespace.
 
 #+begin_src emacs-lisp
   (setq quasar-dir "~/nebulab/quasar/")
@@ -116,6 +115,7 @@ Here we define some custom variables and functions using the =quasar/= namespace
     (quasar-pathname "emacs-quasar.org"))
 #+end_src
 
+* Main editor settings
 ** Tab and Bars
 
 Here we tweak a bit the standard Emacs UI in order to rebrand in a more eye candy way.
@@ -494,7 +494,8 @@ Install which-key
       ("q" nil "🔚quit")
       ("s-o" nil "quit"))
 
-    (global-set-key (kbd "s-o") 'hydra-quasar/body))
+    (global-set-key (kbd "s-o") 'hydra-quasar-org/body)
+    (global-set-key (kbd "s-O") 'hydra-quasar/body))
 #+end_src
 ** Auth sources
 
@@ -514,8 +515,13 @@ You can get your agenda files by pointing to a custom directory.
   (setq org-capture-templates
 	'(("t" "Todo" entry (file+headline "~/Dropbox/work/org/gtd.org" "Tasks")
 	   "* TODO %?\n  %i\n  %a")
-	  ("s" "Nebulab: dev note" entry (file+datetree (quasar-pathname "org/dev.org"))
-	   "* %?\nEntered on %U\n  %i\n  %a")))
+	  ("n" "General note" entry (file "~/Dropbox/work/org/notes.org")
+	   "* %?\n%T\n%i"
+	   :jump-to-captured t)
+	  ("c" "Time track" entry (file "~/Dropbox/work/org/time-track.org")
+	   "* %?\n%T\n%i"
+	   :clock-in t :clock-keep t :jump-to-captured t)))
+
   (setq org-agenda-files '("~/Dropbox/work/org/")
 	diary-file "~/Dropbox/work/diary")
 #+end_src
