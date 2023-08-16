@@ -48,9 +48,10 @@ All the interactive functions can be invoked via the ~M-x~ (alt + x) which invok
 One of the most important thing every emacser appreciate about Emacs is the introspection capabilities and the presence of an highly detailed [[info:Emacs][built-in documentation]].
 
 1. if you want to learn more about Emacs, please [[info:emacs][RTFM ;)]]
-2. whenever you're in a =emacs-lisp= code block, you can put the cursor on a function and press ~C-h f~ to see its documentation; if you're on a variable press ~C-h v~; if you're not sure if your cursor is on a variable or a function, invoke ~C-h o~.
-3. if you want to know which function is attached to a specific keybinding, press ~C-h k~: in the minibuffer you'll see something like /Describe the following key, mouse click or menu item/. Now press a keybinding (try with ~C-f~ which is used to move the cursor forward, or try with ~C-x C-f~ which is used to open a file).
-4. ....
+2. you can reference a plenty of [[External Sources][external sources]].
+4. whenever you're in a =emacs-lisp= code block, you can put the cursor on a function and press ~C-h f~ to see its documentation; if you're on a variable press ~C-h v~; if you're not sure if your cursor is on a variable or a function, invoke ~C-h o~.
+5. if you want to know which function is attached to a specific keybinding, press ~C-h k~: in the minibuffer you'll see something like /Describe the following key, mouse click or menu item/. Now press a keybinding (try with ~C-f~ which is used to move the cursor forward, or try with ~C-x C-f~ which is used to open a file).
+6. ....
 
 ** TODO Commands
 
@@ -744,6 +745,17 @@ As initial buffer, we could provide something custom, but for now we use the =da
   (setq custom-file (concat user-emacs-directory "custom.el"))
   (load custom-file 'noerror)
 #+end_src
+
+* External Sources
+
+Here's the most important sources on the web where you can learn a lot about Emacs.
+
+- [[https://www.gnu.org/software/emacs/documentation.html]]
+- https://www.emacswiki.org/
+- https://emacsdocs.org/
+- [[https://youtube.com/playlist?list=PL8Bwba5vnQK14z96Gil86pLMDO2GnOhQ6][[Youtube] Protesilaos Stavrou - GNU Emacs]]
+- [[https://www.youtube.com/@SystemCrafters][[Youtube] System Crafters]]
+- [[https://youtube.com/playlist?list=PL5--8gKSku15uYCnmxWPO17Dq6hVabAB4][[Youtube] Distrotube - The Church of Emacs]]
 
 * Credits
 ** Protesilaos Stavrou, also known as /Prot/
