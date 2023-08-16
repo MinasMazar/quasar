@@ -505,17 +505,16 @@ Let Emacs asks passwords in the minibuffer or read them via encrypteed =authinfo
 #+end_src
 
 * Org-mode
-** Beautify
-
-#+begin_src emacs-lisp
-  (use-package olivetti)
-#+end_src
-
 ** Agenda
 
 You can get your agenda files by pointing to a custom directory.
 
 #+begin_src emacs-lisp
+  (setq org-capture-templates
+	'(("t" "Todo" entry (file+headline "~/Dropbox/work/org/gtd.org" "Tasks")
+	   "* TODO %?\n  %i\n  %a")
+	  ("s" "Nebulab: dev note" entry (file+datetree (quasar-pathname "org/dev.org"))
+	   "* %?\nEntered on %U\n  %i\n  %a")))
   (setq org-agenda-files '("~/Dropbox/work/org/")
 	diary-file "~/Dropbox/work/diary")
 #+end_src
@@ -526,6 +525,12 @@ You can get your agenda files by pointing to a custom directory.
   (use-package org-roam
     :custom
     (org-roam-directory (file-truename "~/Dropbox/work/org")))
+#+end_src
+
+** Beautify
+
+#+begin_src emacs-lisp
+  (use-package olivetti)
 #+end_src
 
 * IDE
@@ -671,6 +676,20 @@ Vterm is the better terminal emulator in the Emacs ecosystem. It requires some n
   (use-package restclient)
 #+end_src
 
+* Integrations
+** Jira
+** Heroku
+#+begin_src emacs-lisp
+  (defun heroku-rails-console (&optional app-name)
+    "Open a Rails console on an Heroku instance.
+     ,*heroku* executable need to be installed.
+     it uses *vterm* buffer."
+    (interactive "sHeroku app: ")
+    (let ((buffer-name (format "heroku-console: <%s>" app-name))
+	  (cmd (format "heroku run --app=%s bin/rails c" app-name)))
+      (with-current-buffer (vterm buffer-name)
+	(vterm-send-string (concat cmd "\n")))))
+#+end_src
 * MacOS compatibility                                           :portability:
 ** Exec path
 
