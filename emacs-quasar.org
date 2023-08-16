@@ -444,14 +444,14 @@ Install which-key
       ("v" (lambda (&optional arg) (interactive "P") (vterm arg)) "🖥️ vterm")
       ("w" #'browse-url-of-file "🌐 Open file in Browser (browse-url-of-file)")
       ("q" nil "🔚 quit")
-      ("s-o" nil "quit"))
+      ("s-j" nil "quit"))
 
     (defhydra hydra-quasar-bookmarks (:color blue)
       ("j" #'bookmark-jump "🔖 jump")
       ("s" #'bookmark-set "⏬ set")
       ("e" #'edit-bookmarks "📖 edit")
       ("q" nil "🔚 quit")
-      ("s-o" nil "quit"))
+      ("s-j" nil "quit"))
 
     (defhydra hydra-quasar-org (:color blue)
       ("a" #'org-agenda "📅 org-agenda")
@@ -459,6 +459,7 @@ Install which-key
       ("C" #'org-roam-capture "🧠 org-roam-capture")
       ("f" #'org-roam-node-find "🔍 org-roam-node-find")
       ("q" nil "🔚quit")
+      ("s-j" nil "quit")
       ("s-o" nil "quit"))
 
     (defhydra hydra-quasar-filesystem (:color blue)
@@ -466,19 +467,19 @@ Install which-key
       ("d" (lambda () (interactive) (find-file "~/Downloads")) "⬇️ Downloads")
       ("h" (lambda () (interactive) (find-file "~/")) "🏠 home")
       ("q" nil "🔚quit")
-      ("s-o" nil "quit"))
+      ("s-j" nil "quit"))
 
     (defhydra hydra-quasar-utils (:color blue)
       ("c" #'world-clock "🗺️ world clock")
       ("t" #'alarm-clock-set "⏰ set timer!")
       ("T" #'alarm-clock-list-view "📖 list timers")
       ("q" nil "🔚quit")
-      ("s-o" nil "quit"))
+      ("s-j" nil "quit"))
 
     (defhydra hydra-quasar-config (:color blue)
       ("c" (lambda () (interactive) (find-file (quasar-config-file))) "🔧 open config")
       ("q" nil "🔚quit")
-      ("s-o" nil "quit"))
+      ("s-j" nil "quit"))
 
     (defhydra hydra-quasar (:color blue)
       ("e" #'emoji-search "😁 emoji")
@@ -494,11 +495,12 @@ Install which-key
       ("t" #'treemacs "🗃️ treemacs")
       ("u" #'hydra-quasar-utils/body "🔦 utils")
       ("w" #'eww "🌐 eww")
+      ("s-j" #'mode-line-other-buffer "🔃 last-buffer")
       ("q" nil "🔚quit")
       ("s-o" nil "quit"))
 
     (global-set-key (kbd "s-o") 'hydra-quasar-org/body)
-    (global-set-key (kbd "s-O") 'hydra-quasar/body))
+    (global-set-key (kbd "s-j") 'hydra-quasar/body))
 #+end_src
 ** Auth sources
 
