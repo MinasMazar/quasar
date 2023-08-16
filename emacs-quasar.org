@@ -124,7 +124,7 @@ Here we tweak a bit the standard Emacs UI in order to rebrand in a more eye cand
   (menu-bar-mode -1)
   (tool-bar-mode -1)
   (scroll-bar-mode -1)
-  (tab-bar-mode 1)
+  ;(tab-bar-mode 1)
 #+end_src
 
 ** Backgrounds
@@ -137,10 +137,13 @@ Set transparent background (disabled by default)
 
 ** Themes
 
-By default use the [[https://www.youtube.com/watch?v=a3GW9kxmpqA][built-in dark version of /modus/ themes]] by [[Prot][Prot]].
+By default use the [[https://www.youtube.com/watch?v=a3GW9kxmpqA][built-in dark version of /modus/ themes]] by [[Prot][Prot]]; if you want to use another theme, comment in that line. Then put your favourite one there, or customize it.
 
 #+begin_src emacs-lisp
-  (load-theme 'modus-vivendi t)
+  ;;(load-theme 'modus-vivendi t)
+  (use-package dracula-theme
+    :config
+    (load-theme 'dracula t))
 #+end_src
 
 ** Icons
