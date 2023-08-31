@@ -127,6 +127,16 @@ Here we tweak a bit the standard Emacs UI in order to rebrand in a more eye cand
   ;(tab-bar-mode 1)
 #+end_src
 
+** Visual Bell
+
+#+begin_src emacs-lisp
+  (use-package mode-line-bell
+    :custom
+    (visible-bell nil)
+    :config
+    (mode-line-bell-mode 1))
+#+end_src
+
 ** Backgrounds
 
 Set transparent background (disabled by default)
@@ -167,7 +177,15 @@ Set overall font face and dimension. You can customize it using the =customize-f
   (set-face-attribute 'default nil :font "Monaco" :height 180)
 #+end_src
 
-** File navigation
+** Windows
+*** TODO Rules                                                 :experimental:
+
+#+begin_src emacs-lisp :tangle no
+  (setq display-buffer-alist '((lambda (buffer-or-name arg) (not (buffer-file-name (get-buffer buffer-or-name)))
+				       (display-buffer-at-bottom))))
+#+end_src
+
+** File and buffer navigation
 *** Find file at point
 
 This override the standard ~C-c C-f~ keybinding to invoke =find-file-at-point= which is more useful (IMO) than the standard =find-file= function.
@@ -189,6 +207,12 @@ This override the standard ~C-c C-f~ keybinding to invoke =find-file-at-point= w
 
 #+begin_src emacs-lisp
   (use-package treemacs)
+#+end_src
+
+*** Recent files
+
+#+begin_src emacs-lisp
+  (recentf-mode 1)
 #+end_src
 
 ** Find & Replace
@@ -405,10 +429,8 @@ Use Super key to enable ~C-x~ and ~C-c~!
     (keymap-set god-local-mode-map "U" #'undo-redo)
     (keymap-set god-local-mode-map ">" #'end-of-buffer)
     (keymap-set god-local-mode-map "<" #'beginning-of-buffer)
-    (keymap-set god-local-mode-map "[" #'backward-paragraph)
-    (keymap-set god-local-mode-map "]" #'forward-paragraph)
-    (keymap-set god-local-mode-map "{" #'backward-sexp)
-    (keymap-set god-local-mode-map "}" #'forward-sexp)
+    (keymap-set god-local-mode-map "[" #'backward-sexp)
+    (keymap-set god-local-mode-map "]" #'forward-sexp)
     (add-to-list 'god-exempt-major-modes 'compilation-mode)
     (add-to-list 'god-exempt-major-modes 'vterm-mode)
     (god-mode))
@@ -440,18 +462,18 @@ Install which-key
   (use-package hydra
     :config
     (defhydra hydra-quasar-dev-tools (:color blue)
-      ("d" #'flymake-show-buffer-diagnostics "🔬 flymake diagnostic")
+      ("d" #'lsp-ui-flycheck-list "🔬 LSP flymake diagnostic")
       ("v" (lambda (&optional arg) (interactive "P") (vterm arg)) "🖥️ vterm")
       ("w" #'browse-url-of-file "🌐 Open file in Browser (browse-url-of-file)")
       ("q" nil "🔚 quit")
-      ("s-j" nil "quit"))
+      ("s-i" nil "quit"))
 
     (defhydra hydra-quasar-bookmarks (:color blue)
       ("j" #'bookmark-jump "🔖 jump")
       ("s" #'bookmark-set "⏬ set")
       ("e" #'edit-bookmarks "📖 edit")
       ("q" nil "🔚 quit")
-      ("s-j" nil "quit"))
+      ("s-i" nil "quit"))
 
     (defhydra hydra-quasar-org (:color blue)
       ("a" #'org-agenda "📅 org-agenda")
@@ -459,7 +481,7 @@ Install which-key
       ("C" #'org-roam-capture "🧠 org-roam-capture")
       ("f" #'org-roam-node-find "🔍 org-roam-node-find")
       ("q" nil "🔚quit")
-      ("s-j" nil "quit")
+      ("s-i" nil "quit")
       ("s-o" nil "quit"))
 
     (defhydra hydra-quasar-filesystem (:color blue)
@@ -467,25 +489,25 @@ Install which-key
       ("d" (lambda () (interactive) (find-file "~/Downloads")) "⬇️ Downloads")
       ("h" (lambda () (interactive) (find-file "~/")) "🏠 home")
       ("q" nil "🔚quit")
-      ("s-j" nil "quit"))
+      ("s-i" nil "quit"))
 
     (defhydra hydra-quasar-utils (:color blue)
       ("c" #'world-clock "🗺️ world clock")
       ("t" #'alarm-clock-set "⏰ set timer!")
       ("T" #'alarm-clock-list-view "📖 list timers")
       ("q" nil "🔚quit")
-      ("s-j" nil "quit"))
+      ("s-i" nil "quit"))
 
     (defhydra hydra-quasar-config (:color blue)
       ("c" (lambda () (interactive) (find-file (quasar-config-file))) "🔧 open config")
       ("q" nil "🔚quit")
-      ("s-j" nil "quit"))
+      ("s-i" nil "quit"))
 
     (defhydra hydra-quasar (:color blue)
       ("e" #'emoji-search "😁 emoji")
-      ("a" #'hydra-quasar-win/body "🎨 appearance")
+      ("z" #'text-scale-adjust "➕ adjust text scale")
       ("b" #'hydra-quasar-bookmarks/body "🔖 bookmarks")
-      ("x" #'hydra-quasar-config/body "✨ quasar")
+      ("c" #'hydra-quasar-config/body "✨ quasar")
       ("d" #'hydra-quasar-dev-tools/body "🖥️ development")
       ("s" #'eshell "🐚 eshell")
       ("f" #'hydra-quasar-filesystem/body "📁 filesystem")
@@ -495,12 +517,11 @@ Install which-key
       ("t" #'treemacs "🗃️ treemacs")
       ("u" #'hydra-quasar-utils/body "🔦 utils")
       ("w" #'eww "🌐 eww")
-      ("s-j" #'mode-line-other-buffer "🔃 last-buffer")
       ("q" nil "🔚quit")
-      ("s-o" nil "quit"))
+      ("s-i" nil "quit"))
 
     (global-set-key (kbd "s-o") 'hydra-quasar-org/body)
-    (global-set-key (kbd "s-j") 'hydra-quasar/body))
+    (global-set-key (kbd "s-i") 'hydra-quasar/body))
 #+end_src
 ** Auth sources
 
@@ -546,6 +567,23 @@ You can get your agenda files by pointing to a custom directory.
 #+end_src
 
 * IDE
+** Project
+#+begin_src emacs-lisp
+  (require 'project)
+  (setq project-switch-commands '(
+				  (project-find-file "Find file" "f")
+				  (project-find-regexp "Find regexp" "t")
+				  (project-eshell "Eshell" "e")
+				  (project-shell "Shell" "s")
+				  (magit-status "Magit" "m")))
+#+end_src
+** Editing
+
+#+begin_src emacs-lisp
+  (add-hook 'prog-mode-hook #'display-line-numbers-mode)
+  (add-hook 'prog-mode-hook #'subword-mode)
+#+end_src
+
 ** Versioning
 *** Git
 #+begin_src emacs-lisp
@@ -606,6 +644,7 @@ Switching in favor of Eglot since is built-in from Emacs 29.
     (web-mode-code-indent-offset 2)
     (web-mode-css-indent-offset 2)
     (web-mode-markup-indent-offset 2)
+    (web-mode-enable-auto-indentation nil)
     (js-indent-level 2)
     (css-indent-offset 2)
     :config
@@ -630,17 +669,19 @@ Switching in favor of Eglot since is built-in from Emacs 29.
 ** Ruby
 
 #+begin_src emacs-lisp
-    (use-package ruby-mode)
-    (use-package bundler)
-    (use-package rspec-mode
-      :config
-      (add-hook 'after-init-hook 'inf-ruby-switch-setup)
-      (add-hook 'compilation-filter-hook #'inf-ruby-auto-enter)
-      (setq comint-scroll-to-bottom-on-output t))
+  (use-package ruby-mode)
+  (use-package bundler)
+  (use-package rspec-mode
+    :config
+    (add-hook 'after-init-hook 'inf-ruby-switch-setup)
+    (add-hook 'compilation-filter-hook #'inf-ruby-auto-enter)
+    (setq comint-scroll-to-bottom-on-output t))
+  (use-package rinari
+    :config
+    (defalias 'rake 'rinari-rake)
+    (global-rinari-mode))
 
-    (use-package rinari
-      :config
-      (defalias 'rake 'rinari-rake))
+  (use-package erblint)
 #+end_src
 
 ** Shell & Terminal
@@ -664,17 +705,6 @@ Vterm is the better terminal emulator in the Emacs ecosystem. It requires some n
 	  (vterm-send-string "tmux attach\n"))))
 #+end_src
 
-*** Fish-like shell
-
-#+begin_src emacs-lisp
-  (use-package capf-autosuggest
-    :config
-    (capf-autosuggest-mode 1)
-    :hook
-    (comint-mode capf-autosuggest)
-    (eshell-mode capf-autosuggest))
-#+end_src
-
 ** Docker
 
 #+begin_src emacs-lisp
@@ -688,17 +718,48 @@ Vterm is the better terminal emulator in the Emacs ecosystem. It requires some n
   (use-package restclient)
 #+end_src
 
+** Comunication
+*** Slack
+
+#+begin_src emacs-lisp
+  (use-package slack)
+#+end_src
+
+Here's an example configuration. More details in [[https://github.com/yuya373/emacs-slack][the package README]].
+
+#+begin_example emacs-lisp
+  (slack-register-team
+   :name "myslackteam"
+   :token (auth-source-pick-first-password
+	   :host "myslackteam.slack.com"
+	   :user "me@example.com")
+   :cookie (auth-source-pick-first-password
+	   :host "myslackteam.slack.com"
+	   :user "me@example.com^cookie")
+   :subscribed-channels '((channel1 channel2)))
+#+end_example
+
 * Integrations
 ** Jira
 ** Heroku
 #+begin_src emacs-lisp
   (defun heroku-rails-console (&optional app-name)
     "Open a Rails console on an Heroku instance.
-     ,*heroku* executable need to be installed.
+     *heroku* executable need to be installed.
      it uses *vterm* buffer."
     (interactive "sHeroku app: ")
     (let ((buffer-name (format "heroku-console: <%s>" app-name))
 	  (cmd (format "heroku run --app=%s bin/rails c" app-name)))
+      (with-current-buffer (vterm buffer-name)
+	(vterm-send-string (concat cmd "\n")))))
+
+  (defun heroku-logs (&optional app-name)
+    "Start collecting logs from an heroku app
+     *heroku* executable need to be installed.
+     it uses *vterm* buffer."
+    (interactive "sHeroku app: ")
+    (let ((buffer-name (format "heroku-logs: <%s>" app-name))
+	  (cmd (format "heroku logs -t --app=%s" app-name)))
       (with-current-buffer (vterm buffer-name)
 	(vterm-send-string (concat cmd "\n")))))
 #+end_src
