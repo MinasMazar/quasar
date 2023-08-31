@@ -184,6 +184,27 @@ Set overall font face and dimension. You can customize it using the =customize-f
   (setq display-buffer-alist '((lambda (buffer-or-name arg) (not (buffer-file-name (get-buffer buffer-or-name)))
 				       (display-buffer-at-bottom))))
 #+end_src
+*** Popper
+
+#+begin_quote
+Popper is a minor-mode to tame the flood of ephemeral windows Emacs produces, while still keeping them within
+arm’s reach.
+#+end_quote
+
+#+begin_src emacs-lisp
+  (use-package popper
+    :bind (("s-j" . popper-toggle-latest)
+	   ("s-J" . popper-cycle))
+    :init
+    (setq popper-reference-buffers
+	  '("\\*Messages\\*"
+	    "Output\\*$"
+	    "\\*Async Shell Command\\*"
+	    help-mode
+	    compilation-mode))
+    (popper-mode +1)
+    (popper-echo-mode +1))
+#+end_src
 
 ** File and buffer navigation
 *** Find file at point
@@ -374,7 +395,6 @@ Bind the =super-key= to most important commands. The =execute-extented-command= 
 
 #+begin_src emacs-lisp
   (global-set-key (kbd "s-k") #'execute-extended-command)
-  (global-set-key (kbd "s-j") #'switch-to-buffer)
   (global-set-key (kbd "s--") #'bookmark-jump)
   (global-set-key (kbd "s-_") nil)
   (global-set-key (kbd "s-N") #'dired-jump)
