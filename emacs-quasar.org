@@ -456,8 +456,8 @@ Use Super key to enable ~C-x~ and ~C-c~!
     (keymap-set god-local-mode-map "U" #'undo-redo)
     (keymap-set god-local-mode-map ">" #'end-of-buffer)
     (keymap-set god-local-mode-map "<" #'beginning-of-buffer)
-    (keymap-set god-local-mode-map "[" #'backward-sexp)
-    (keymap-set god-local-mode-map "]" #'forward-sexp)
+    (keymap-set god-local-mode-map "[" #'backward-sentence)
+    (keymap-set god-local-mode-map "]" #'forward-sentence)
     (keymap-set god-local-mode-map "{" #'backward-paragraph)
     (keymap-set god-local-mode-map "}" #'forward-paragraph)
     (add-to-list 'god-exempt-major-modes 'compilation-mode)
@@ -481,6 +481,17 @@ Install which-key
     ("s-n" . evil-mode)
     :config
     (evil-mode 1))
+#+end_src
+
+*** Key-chord
+
+Install and setup the mighty [[https://github.com/emacsorphanage/key-chord#key-chord][=key-chord= package!]]
+
+#+begin_src emacs-lisp
+  (use-package key-chord
+    :config
+    (key-chord-mode 1)
+    (key-chord-define-global "gh" #'magit-status))
 #+end_src
 
 *** Hydra
@@ -719,6 +730,14 @@ Switching in favor of Eglot since is built-in from Emacs 29.
     (html-mode . emmet-mode)
     (web-mode . emmet-mode)
     (css-mode . emmet-mode))
+#+end_src
+
+** Javascript
+
+#+begin_src emacs-lisp
+  (use-package js2-mode
+    :config
+    (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode)))
 #+end_src
 
 ** Ruby
