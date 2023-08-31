@@ -568,6 +568,7 @@ You can get your agenda files by pointing to a custom directory.
 
 * IDE
 ** Project
+
 #+begin_src emacs-lisp
   (require 'project)
   (setq project-switch-commands '(
@@ -576,6 +577,25 @@ You can get your agenda files by pointing to a custom directory.
 				  (project-eshell "Eshell" "e")
 				  (project-shell "Shell" "s")
 				  (magit-status "Magit" "m")))
+#+end_src
+
+It's not super clear to me, but I found that using =project-switch-project= does not work as expected for all functions. This override solve the issue (it just set also the =default-directory= along with =project-current-directory-override=.
+
+#+begin_src emacs-lisp
+  (defun project-switch-project (dir)
+    "\"Switch\" to another project by running an Emacs command.
+  The available commands are presented as a dispatch menu
+  made from `project-switch-commands'.
+
+  When called in a program, it will use the project corresponding
+  to directory DIR."
+    (interactive (list (project-prompt-project-dir)))
+    (let ((command (if (symbolp project-switch-commands)
+		       project-switch-commands
+		     (project--switch-project-command))))
+      (let ((project-current-directory-override dir)
+	    (default-directory dir))
+	(call-interactively command))))
 #+end_src
 ** Editing
 
