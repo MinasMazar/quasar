@@ -193,8 +193,8 @@ arm’s reach.
 
 #+begin_src emacs-lisp
   (use-package popper
-    :bind (("s-j" . popper-toggle-latest)
-	   ("s-J" . popper-cycle))
+    :bind (("s-`" . popper-toggle-latest)
+	   ("s-~" . popper-cycle))
     :init
     (setq popper-reference-buffers
 	  '("\\*Messages\\*"
@@ -204,6 +204,12 @@ arm’s reach.
 	    compilation-mode))
     (popper-mode +1)
     (popper-echo-mode +1))
+#+end_src
+
+*** Golden ratio
+
+#+begin_src emacs-lisp
+  (use-package golden-ratio)
 #+end_src
 
 ** File and buffer navigation
@@ -396,6 +402,7 @@ Bind the =super-key= to most important commands. The =execute-extented-command= 
 #+begin_src emacs-lisp
   (global-set-key (kbd "s-k") #'execute-extended-command)
   (global-set-key (kbd "s--") #'bookmark-jump)
+  (global-set-key (kbd "s-j") #'switch-to-buffer)
   (global-set-key (kbd "s-_") nil)
   (global-set-key (kbd "s-N") #'dired-jump)
   (global-set-key (kbd "s-b") #'ibuffer)
@@ -451,6 +458,8 @@ Use Super key to enable ~C-x~ and ~C-c~!
     (keymap-set god-local-mode-map "<" #'beginning-of-buffer)
     (keymap-set god-local-mode-map "[" #'backward-sexp)
     (keymap-set god-local-mode-map "]" #'forward-sexp)
+    (keymap-set god-local-mode-map "{" #'backward-paragraph)
+    (keymap-set god-local-mode-map "}" #'forward-paragraph)
     (add-to-list 'god-exempt-major-modes 'compilation-mode)
     (add-to-list 'god-exempt-major-modes 'vterm-mode)
     (god-mode))
@@ -523,13 +532,19 @@ Install which-key
       ("q" nil "🔚quit")
       ("s-i" nil "quit"))
 
-    (defhydra hydra-quasar (:color blue)
-      ("e" #'emoji-search "😁 emoji")
+    (defhydra hydra-quasar-appearance (:color blue)
       ("z" #'text-scale-adjust "➕ adjust text scale")
+      ("g" #'golden-ratio-mode "📐 golden-ratio")
+      ("q" nil "🔚quit")
+      ("s-i" nil "quit"))
+
+    (defhydra hydra-quasar (:color blue)
+      ("8" #'emoji-search "😁 emoji")
+      ("a" #'hydra-quasar-appearance/body "🎨 appearance")
       ("b" #'hydra-quasar-bookmarks/body "🔖 bookmarks")
       ("c" #'hydra-quasar-config/body "✨ quasar")
       ("d" #'hydra-quasar-dev-tools/body "🖥️ development")
-      ("s" #'eshell "🐚 eshell")
+      ("e" #'eshell "🐚 eshell")
       ("f" #'hydra-quasar-filesystem/body "📁 filesystem")
       ("n" #'gnus "📧 gnus")
       ("o" #'hydra-quasar-org/body "📅 org")
