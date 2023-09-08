@@ -759,6 +759,39 @@ Switching in favor of Eglot since is built-in from Emacs 29.
 #+end_src
 
 ** Shell & Terminal
+*** Eshell
+
+Enanche =eshell= to be more IDE oriented.
+
+#+begin_src emacs-lisp
+  (require 'em-smart)
+  (setq eshell-aliases-file (quasar-pathname "eshell-aliases")
+	eshell-where-to-jump 'begin
+	eshell-review-quick-commands nil
+	eshell-smart-space-goes-to-end t)
+#+end_src
+
+Aliases
+
+#+begin_src emacs-lisp :tangle (concat "" eshell-aliases-file)
+  alias t (vterm (format "*vterm <%s>*" default-directory))
+  alias j (call-interactively #'bookmark-jump)
+  alias q kill-this-buffer
+  alias s (eshell-source-file "~/script.eshell")
+  alias ga git add .
+  alias gl git log
+  alias gs git status
+  alias gm magit-status
+  alias v view-file $1
+  alias aliases view-file $eshell-aliases-file
+  alias l ls -lha
+  alias d dired-jump $1
+  alias mmconf find-file "~/blorg/source/emacs/minemacs.org"
+  alias b ibuffer
+  alias rr bin/rake restart
+  alias p mpv $1 &
+#+end_src
+
 *** Shell
 
 Press ~C-j~ and start typing to search commands in the history.
