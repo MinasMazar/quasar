@@ -391,8 +391,7 @@ Enable the orderless candidates matching, which is slightly better than the Emac
 *** Tab key behavior
 
 #+begin_src emacs-lisp
-  (setq tab-always-indent 'complete
-	indent-tabs-mode nil)
+  (setq tab-always-indent 'complete)
 #+end_src
 
 *** Super key
@@ -648,6 +647,7 @@ It's not super clear to me, but I found that using =project-switch-project= does
 #+begin_src emacs-lisp
   (add-hook 'prog-mode-hook #'display-line-numbers-mode)
   (add-hook 'prog-mode-hook #'subword-mode)
+  (add-hook 'prog-mode-hook (lambda () (indent-tabs-mode -1)))
 #+end_src
 
 ** Versioning
@@ -787,7 +787,6 @@ Aliases
   alias aliases view-file $eshell-aliases-file
   alias l ls -lha
   alias d dired-jump $1
-  alias mmconf find-file "~/blorg/source/emacs/minemacs.org"
   alias b ibuffer
   alias rr bin/rake restart
   alias p mpv $1 &
