@@ -769,6 +769,7 @@ Enanche =eshell= to be more IDE oriented.
 	eshell-where-to-jump 'begin
 	eshell-review-quick-commands nil
 	eshell-smart-space-goes-to-end t)
+  ;;(add-hook 'eshell-mode-hook #'eshell-smart-initialize)
 #+end_src
 
 Aliases
